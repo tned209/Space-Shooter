@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private float _playerspeed = 7.0f;
-    private float _playerspeedboost = 5.0f;
+    private float _playerspeed = 5.0f;
+    private float _playerspeedboost = 0f;
     [SerializeField]
     private GameObject _laserPrefab = default;
     [SerializeField]
@@ -39,6 +39,7 @@ public class Player : MonoBehaviour
     private GameObject ExplosionRef;
     private AudioSource _playerexplosionsfx;
     private AudioClip _playerboom;
+    private float _turbo = 0f;
 
 
 
@@ -72,6 +73,14 @@ public class Player : MonoBehaviour
         {
             Application.Quit();
         }
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            EngageTurbo();
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            DisengageTurbo();
+        }
     }
 
     void CalculateMovement()
@@ -88,16 +97,8 @@ public class Player : MonoBehaviour
             _thrustervisualizer.SetActive(false);
         }
 
-        //move player at adjustable speed in real time with controller inputs
-        if (_speedactive == true)
-        {
-            transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * (_playerspeed + _playerspeedboost) * Time.deltaTime);
-        }
-        else
-        {
-            transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * _playerspeed * Time.deltaTime);
-        }
-        
+        transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * (_playerspeed + _playerspeedboost + _turbo) * Time.deltaTime);
+
         // restricting player to playspace with horizontal wraparound
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -3.8f, 5.8f), 0);
 
@@ -110,7 +111,18 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(9.5f, transform.position.y, 0);
         }
     }
-    void LaserFire()
+
+    private void EngageTurbo()
+    {
+        _turbo = 3.0f;
+    }
+
+    private void DisengageTurbo()
+    {
+        _turbo = 0f;
+    }
+
+    private void LaserFire()
     {
         //fire laser and reset time last fired
         Vector3 laserOffset = new Vector3(0, 1.02f, 0);
@@ -169,6 +181,7 @@ public class Player : MonoBehaviour
     }
     public void SpeedActive()
     {
+        _playerspeedboost = 5.0f;
         _speedactive = true;
         _speedactivetime = _speedactivetime + 5.0f;
         StartCoroutine(PowerupPowerDownRoutine());
@@ -199,6 +212,7 @@ public class Player : MonoBehaviour
                 {
                     _speedactivetime = 0;
                     _speedactive = false;
+                    _playerspeedboost = 0f;
                 }
             }
             yield return null;
