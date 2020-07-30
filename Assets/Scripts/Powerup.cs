@@ -6,7 +6,7 @@ public class Powerup : MonoBehaviour
     private float _powerupspeed = 3.0f;
     private int _pointvalue = 500;
     [SerializeField]
-    private int _powerupID;  //0 = tripleshot  1 = speedboost  2 = shield
+    private int _powerupID = default;  //0 = tripleshot  1 = speedboost  2 = shield
     private GameObject PowerUpSoundRef;
     private AudioSource _powerupsfx;
     private AudioClip _powerupclip;
