@@ -36,14 +36,13 @@ public class Player : MonoBehaviour
     private AudioSource _lasersource = default;
     [SerializeField]
     private GameObject _playerExplosionPrefab = default;
-    private GameObject ExplosionRef;
+    private GameObject _explosionRef = default;
     private AudioSource _playerexplosionsfx;
     private AudioClip _playerboom;
     private float _turbo = 0f;
-
-
-
-
+    private int _shieldstrength = 0;
+    private SpriteRenderer _shieldRenderer = default;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -52,9 +51,14 @@ public class Player : MonoBehaviour
         _uiManager = GameObject.FindObjectOfType<UIManager>();
         _spawnManager = GameObject.FindObjectOfType<SpawnManager>();
         _pewpew = _lasersource.clip;
-        ExplosionRef = GameObject.Find("explosion_sound");
-        _playerexplosionsfx = ExplosionRef.GetComponent<AudioSource>();
+        _explosionRef = GameObject.Find("explosion_sound");
+        _playerexplosionsfx = _explosionRef.GetComponent<AudioSource>();
         _playerboom = _playerexplosionsfx.clip;
+        _shieldRenderer = _activeshieldvisualizer.GetComponent<SpriteRenderer>();
+        if (_shieldRenderer == null)
+        {
+            Debug.LogError("Player _shieldrenderer is NULL");
+        }
 
 
 
@@ -142,8 +146,7 @@ public class Player : MonoBehaviour
     {
         if(_shieldactive == true)
         {
-            _shieldactive = false;
-            _activeshieldvisualizer.SetActive(false);
+            ShieldDamage();
             return;
         }
         _lives--;
@@ -170,10 +173,46 @@ public class Player : MonoBehaviour
             Destroy(this.gameObject);
             _spawnManager.OnPlayerDeath();
         }
-
-
     }
-    public void TripleShotActive()
+
+    private void ShieldDamage()
+    {
+        if (_shieldstrength > 0)
+        {
+            _shieldstrength--;
+        }
+        if (_shieldstrength == 0)
+        {
+            _shieldactive = false;
+            _activeshieldvisualizer.SetActive(false);
+        }
+        ShieldStrengthVisualizerController();
+    }
+    private void ShieldStrengthVisualizerController()
+    {
+        switch (_shieldstrength)
+        {
+            case 0:
+                break;
+            case 1:
+                _activeshieldvisualizer.transform.localScale = new Vector3(1.7f, 1.7f, 0);
+                _shieldRenderer.color = new Color32(255, 255, 255, 75);
+                break;
+            case 2:
+                _activeshieldvisualizer.transform.localScale = new Vector3(1.9f, 1.9f, 0);
+                _shieldRenderer.color = new Color32(255, 255, 255, 150);
+                break;
+            case 3:
+                _activeshieldvisualizer.transform.localScale = new Vector3(2.1f, 2.1f, 0);
+                _shieldRenderer.color = new Color32(255, 255, 255, 255);
+                break;
+            default:
+                Debug.LogError("Player _shieldstrength defaulted");
+                break;
+        }
+    }
+
+public void TripleShotActive()
     {
         _tripleshotactive = true;
         _tripleshotactivetime = _tripleshotactivetime + 5.0f;
@@ -188,8 +227,14 @@ public class Player : MonoBehaviour
     }
     public void ShieldActive()
     {
-        _shieldactive = true;
+        if (_shieldstrength < 3)
+        {
+            _shieldstrength++;
+        }
+        ShieldStrengthVisualizerController();
         _activeshieldvisualizer.SetActive(true);
+        _shieldactive = true;
+
     }
 
     IEnumerator PowerupPowerDownRoutine()

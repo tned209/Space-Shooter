@@ -10,7 +10,7 @@ public class Asteroid : MonoBehaviour
     private GameObject ExplosionRef;
     private AudioSource _asteroidexplosionsfx;
     private AudioClip _rockboom;
-
+    private CircleCollider2D _cc;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +21,7 @@ public class Asteroid : MonoBehaviour
         ExplosionRef = GameObject.Find("explosion_sound");
         _asteroidexplosionsfx = ExplosionRef.GetComponent<AudioSource>();
         _rockboom = _asteroidexplosionsfx.clip;
+        _cc = gameObject.GetComponent<CircleCollider2D>();
     }
 
     // Update is called once per frame
@@ -35,6 +36,7 @@ public class Asteroid : MonoBehaviour
         {
             _asteroidexplosionsfx.PlayOneShot(_rockboom, 1.0f);
             GameObject _boom = Instantiate(_asteroidExplosionPrefab, transform.position, Quaternion.identity);
+            Destroy(_cc);
             Destroy(this.gameObject, 0.3f);
             _player.Damage();
             Destroy(_boom, 2.35f);
@@ -44,6 +46,7 @@ public class Asteroid : MonoBehaviour
         {
             _asteroidexplosionsfx.PlayOneShot(_rockboom, 1.0f);
             GameObject _boom = Instantiate(_asteroidExplosionPrefab, transform.position, Quaternion.identity);
+            Destroy(_cc);
             Destroy(this.gameObject, 0.3f);
             Destroy(other.gameObject);
             Destroy(_boom, 2.35f);
