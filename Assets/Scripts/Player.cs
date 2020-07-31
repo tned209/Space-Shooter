@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     private GameObject _laserPrefab = default;
     [SerializeField]
     private GameObject _tripleshotPrefab = default;
-    private float _fireRate = 0.15f;
+    private float _fireRate = 0.20f;
     private float _canfire = -1.0f;
     private int _lives = 3;
     private SpawnManager _spawnManager;
@@ -42,6 +42,11 @@ public class Player : MonoBehaviour
     private float _turbo = 0f;
     private int _shieldstrength = 0;
     private SpriteRenderer _shieldRenderer = default;
+    private int _ammocount = 15;
+    private GameObject _emptyRef = default;
+    [SerializeField]
+    private AudioSource _emptysource = default;
+    private AudioClip _emptyclick = default;
     
     // Start is called before the first frame update
     void Start()
@@ -59,6 +64,8 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Player _shieldrenderer is NULL");
         }
+        _emptyRef = GameObject.Find("no_ammo");
+        _emptyclick = _emptyRef.GetComponent<AudioSource>().clip;
 
 
 
@@ -128,19 +135,27 @@ public class Player : MonoBehaviour
 
     private void LaserFire()
     {
-        //fire laser and reset time last fired
         Vector3 laserOffset = new Vector3(0, 1.02f, 0);
-        _canfire = Time.time + _fireRate;
-        _lasersource.PlayOneShot(_pewpew, 1.0f);
         if (_tripleshotactive == false)
         {
-            Instantiate(_laserPrefab, transform.position + laserOffset, Quaternion.identity);
+            if (_ammocount > 0)
+            {
+                Instantiate(_laserPrefab, transform.position + laserOffset, Quaternion.identity);
+                _canfire = Time.time + _fireRate;
+                _lasersource.PlayOneShot(_pewpew, 1.0f);
+                _ammocount--;
+                _uiManager.UpdateAmmo(_ammocount);
+            }
+            else if (_ammocount == 0)
+            {
+                _emptysource.PlayOneShot(_emptyclick, 1.0f);
+            }
         }
-        else
+        else if (_tripleshotactive == true)
         {
             Instantiate(_tripleshotPrefab, transform.position, Quaternion.identity);
         }
-        
+
     }
     public void Damage()
     {
@@ -220,7 +235,7 @@ public void TripleShotActive()
     }
     public void SpeedActive()
     {
-        _playerspeedboost = 5.0f;
+        _playerspeedboost = 3.0f;
         _speedactive = true;
         _speedactivetime = _speedactivetime + 5.0f;
         StartCoroutine(PowerupPowerDownRoutine());

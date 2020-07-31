@@ -83,7 +83,10 @@ public class Enemy : MonoBehaviour
             _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
             _animator.SetTrigger("OnEnemyDeath");
             Destroy(this.gameObject, 2.8f);
-            _player.TrackScore(_scorevalue);
+            if (_player != null)
+            {
+                _player.TrackScore(_scorevalue);
+            }
         }
     }
 

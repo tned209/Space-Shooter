@@ -14,6 +14,9 @@ public class UIManager : MonoBehaviour
     private Text _gameover = default;
     [SerializeField]
     private Text _restart = default;
+    [SerializeField]
+    private Text _ammoText = default;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,6 +38,11 @@ public class UIManager : MonoBehaviour
     public void UpdateLives(int _currentlives)
     {
         _livesimage.sprite = _livesprites[_currentlives];
+    }
+
+    public void UpdateAmmo(int _ammocount)
+    {
+        _ammoText.text = "Ammo Remaining: " + _ammocount.ToString();
     }
 
     public IEnumerator GameOverDisplayCo()
