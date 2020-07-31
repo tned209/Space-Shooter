@@ -47,8 +47,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioSource _emptysource = default;
     private AudioClip _emptyclick = default;
-   
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -77,7 +76,6 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         CalculateMovement();
         //set spacebar to fire laser and check refire rate
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canfire)

@@ -19,9 +19,6 @@ public class Enemy : MonoBehaviour
     private AudioClip _pewpew = default;
     private AudioSource _lasersource = default;
     private GameObject LaserRef = default;
-    
-   
-
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +33,7 @@ public class Enemy : MonoBehaviour
         LaserRef = GameObject.Find("laser_shot");
         _lasersource = LaserRef.GetComponent<AudioSource>();
         _pewpew = _lasersource.clip;
-        _refire = Time.time + Random.Range(1.0f, 4.0f);      
+        _refire = Time.time + Random.Range(1.0f, 4.0f);
     }
 
     // Update is called once per frame
@@ -53,7 +50,7 @@ public class Enemy : MonoBehaviour
         }
 
         //enemy fires laser occasionally
-        if (_refire <= Time.time && _name != "Dying Enemy")
+        if (_refire <= Time.time && _name != "Dying Enemy" && _player != null)
         {
             LaserFire();
         }

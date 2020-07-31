@@ -5,16 +5,12 @@ using UnityEngine;
 public class Enemy_Laser : MonoBehaviour
 {
     private float _laserspeed = 8.0f;
-    Player _player;
+    //Player _player;
 
     // Start is called before the first frame update
     void Start()
     {
-        _player = FindObjectOfType<Player>();
-        if (null == _player)
-        {
-            Debug.LogError("Enemy_Laser _player is NULL");
-        }
+        
     }
 
     // Update is called once per frame
@@ -35,6 +31,7 @@ public class Enemy_Laser : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+        Player _player = other.GetComponent<Player>();
             _player.HealthManagement(false);
             Destroy(gameObject);
         }
