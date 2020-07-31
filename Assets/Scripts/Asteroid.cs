@@ -38,7 +38,7 @@ public class Asteroid : MonoBehaviour
             GameObject _boom = Instantiate(_asteroidExplosionPrefab, transform.position, Quaternion.identity);
             Destroy(_cc);
             Destroy(this.gameObject, 0.3f);
-            _player.Damage();
+            _player.HealthManagement(false);
             Destroy(_boom, 2.35f);
             _spawnmanager.StartSpawning();
         }

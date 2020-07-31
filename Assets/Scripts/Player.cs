@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioSource _emptysource = default;
     private AudioClip _emptyclick = default;
+   
     
     // Start is called before the first frame update
     void Start()
@@ -60,13 +61,17 @@ public class Player : MonoBehaviour
         _playerexplosionsfx = _explosionRef.GetComponent<AudioSource>();
         _playerboom = _playerexplosionsfx.clip;
         _shieldRenderer = _activeshieldvisualizer.GetComponent<SpriteRenderer>();
-        if (_shieldRenderer == null)
+        if (null == _shieldRenderer)
         {
             Debug.LogError("Player _shieldrenderer is NULL");
         }
         _emptyRef = GameObject.Find("no_ammo");
         _emptysource = _emptyRef.GetComponent<AudioSource>();
         _emptyclick = _emptysource.clip;
+        if (null == _spawnManager)
+        {
+            Debug.LogError("Player Spawn Manager is NULL");
+        }
     }
 
     // Update is called once per frame
@@ -143,7 +148,10 @@ public class Player : MonoBehaviour
                 _canfire = Time.time + _fireRate;
                 _lasersource.PlayOneShot(_pewpew, 1.0f);
                 _ammocount--;
-                _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
+                if(_uiManager != null)
+                {
+                    _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
+                }
             }
             else if (_ammocount == 0)
             {
@@ -153,39 +161,51 @@ public class Player : MonoBehaviour
         else if (_tripleshotactive == true)
         {
             Instantiate(_tripleshotPrefab, transform.position, Quaternion.identity);
+            _lasersource.PlayOneShot(_pewpew, 1.0f);
         }
 
     }
-    public void Damage()
+    public void HealthManagement(bool _heal)
     {
-        if(_shieldactive == true)
+        Debug.Log("_heal = " + _heal);
+        if (_shieldactive == true && _heal == false)
         {
             ShieldDamage();
             return;
         }
-        _lives--;
+        if (_heal == false)
+        {
+            _lives--;
+        }
+        else if (_heal == true && _lives < 3)
+        {
+            _lives++;
+        }
         _uiManager.UpdateLives(_lives);
 
-        if (_lives == 2)
+        switch (_lives)
         {
-            _leftdamagevisualizer.SetActive(true);
-        }
-
-        if (_lives == 1)
-        {
-            _rightdamagevisualizer.SetActive(true);
-        }
-
-        if (_lives <= 0)
-        {
-            if (_spawnManager == null)
-            {
-                Debug.LogError("The Spawn Manager is NULL");
-            }
-            _playerexplosionsfx.PlayOneShot(_playerboom, 1.0f);
-            Instantiate(_playerExplosionPrefab, transform.position, Quaternion.identity);
-            Destroy(this.gameObject);
-            _spawnManager.OnPlayerDeath();
+            case 0:
+                _playerexplosionsfx.PlayOneShot(_playerboom, 1.0f);
+                Instantiate(_playerExplosionPrefab, transform.position, Quaternion.identity);
+                Destroy(this.gameObject);
+                if (_spawnManager != null)
+                {
+                    _spawnManager.OnPlayerDeath();
+                }
+                return;
+            case 1:
+                _rightdamagevisualizer.SetActive(true);
+                _leftdamagevisualizer.SetActive(true);
+                return;
+            case 2:
+                _leftdamagevisualizer.SetActive(true);
+                _rightdamagevisualizer.SetActive(false);
+                return;
+            case 3:
+                _leftdamagevisualizer.SetActive(false);
+                _rightdamagevisualizer.SetActive(false);
+                return;
         }
     }
 
@@ -290,14 +310,6 @@ public void TripleShotActive()
         if (_uiManager != null)
         {
             _uiManager.UpdateUIScore(_score);
-        }
-        
-    }
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Enemy_Laser")
-        {
-            Damage();
         }
     }
 }

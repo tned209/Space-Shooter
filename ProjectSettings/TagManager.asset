@@ -12,6 +12,7 @@ TagManager:
   - Asteroid
   - Enemy_Laser
   - Ammo
+  - Repair
   layers:
   - Default
   - TransparentFX

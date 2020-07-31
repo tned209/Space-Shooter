@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
             _player.TrackScore(_scorevalue);
             if (_player != null)
             {
-                _player.Damage();
+                _player.HealthManagement(false);
             }
         }
         else if (other.tag == "Laser")

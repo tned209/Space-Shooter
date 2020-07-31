@@ -6,7 +6,7 @@ public class Powerup : MonoBehaviour
     private float _powerupspeed = 3.0f;
     private int _pointvalue = 500;
     [SerializeField]
-    private int _powerupID = default;  //0 = tripleshot  1 = speedboost  2 = shield  3 = reload
+    private int _powerupID = default;  //0 = tripleshot  1 = speedboost  2 = shield  3 = reload  4 = health
     private GameObject PowerUpSoundRef;
     private AudioSource _powerupsfx;
     private AudioClip _powerupclip;
@@ -59,13 +59,16 @@ public class Powerup : MonoBehaviour
                     case 3:
                         _player.Reload();
                         break;
+                    case 4:
+                        _player.HealthManagement(true);
+                        break;
                     default:
                         Debug.LogError("Powerup activation switch defaulted");
                         break;
                 }
             }
             
-            if (_powerupID >= 0 && _powerupID < 3)
+            if (_powerupID < 3 || _powerupID == 4)
             {
                 _powerupsfx.PlayOneShot(_powerupclip, 1.0f);
             }
