@@ -11,6 +11,7 @@ TagManager:
   - Shield
   - Asteroid
   - Enemy_Laser
+  - Ammo
   layers:
   - Default
   - TransparentFX

@@ -51,7 +51,7 @@ public class SpawnManager : MonoBehaviour
         while (_playeralive == true)
         {
             yield return new WaitForSeconds(Random.Range(3.0f, 7.0f));
-            Instantiate(_poweruptype[Random.Range(0,3)], new Vector3(Random.Range(-9.5f, 9.5f), 5.75f, 0.0f), Quaternion.identity);
+            Instantiate(_poweruptype[Random.Range(0,4)], new Vector3(Random.Range(-9.5f, 9.5f), 5.75f, 0.0f), Quaternion.identity);
         }
         
         

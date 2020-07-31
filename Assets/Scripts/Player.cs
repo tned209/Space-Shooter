@@ -65,11 +65,10 @@ public class Player : MonoBehaviour
             Debug.LogError("Player _shieldrenderer is NULL");
         }
         _emptyRef = GameObject.Find("no_ammo");
-        _emptyclick = _emptyRef.GetComponent<AudioSource>().clip;
-
-
-
+        _emptysource = _emptyRef.GetComponent<AudioSource>();
+        _emptyclick = _emptysource.clip;
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -144,7 +143,7 @@ public class Player : MonoBehaviour
                 _canfire = Time.time + _fireRate;
                 _lasersource.PlayOneShot(_pewpew, 1.0f);
                 _ammocount--;
-                _uiManager.UpdateAmmo(_ammocount);
+                _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
             }
             else if (_ammocount == 0)
             {
@@ -249,7 +248,12 @@ public void TripleShotActive()
         ShieldStrengthVisualizerController();
         _activeshieldvisualizer.SetActive(true);
         _shieldactive = true;
+    }
 
+    public void Reload()
+    {
+        _ammocount = 15;
+        _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
     }
 
     IEnumerator PowerupPowerDownRoutine()
@@ -258,11 +262,13 @@ public void TripleShotActive()
         {
             if (_tripleshotactive == true)
             {
+                _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
                 _tripleshotactivetime -= Time.deltaTime;
                 if (_tripleshotactivetime <= 0)
                 {
                     _tripleshotactivetime = 0;
                     _tripleshotactive = false;
+                    _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
                 }
             }
             if (_speedactive == true)

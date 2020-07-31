@@ -6,17 +6,24 @@ public class Powerup : MonoBehaviour
     private float _powerupspeed = 3.0f;
     private int _pointvalue = 500;
     [SerializeField]
-    private int _powerupID = default;  //0 = tripleshot  1 = speedboost  2 = shield
+    private int _powerupID = default;  //0 = tripleshot  1 = speedboost  2 = shield  3 = reload
     private GameObject PowerUpSoundRef;
     private AudioSource _powerupsfx;
     private AudioClip _powerupclip;
-    
+    private GameObject _reloadRef = default;
+    [SerializeField]
+    private AudioSource _reloadsource = default;
+    private AudioClip _reloadclip = default;
+
     // Start is called before the first frame update
     void Start()
     {
         PowerUpSoundRef = GameObject.Find("power_up_sound");
         _powerupsfx = PowerUpSoundRef.GetComponent<AudioSource>();
         _powerupclip = _powerupsfx.clip;
+        _reloadRef = GameObject.Find("reload");
+        _reloadsource = _reloadRef.GetComponent<AudioSource>();
+        _reloadclip = _reloadsource.clip;
     }
 
     // Update is called once per frame
@@ -49,12 +56,23 @@ public class Powerup : MonoBehaviour
                     case 2:
                         _player.ShieldActive();
                         break;
+                    case 3:
+                        _player.Reload();
+                        break;
                     default:
                         Debug.LogError("Powerup activation switch defaulted");
                         break;
                 }
             }
-            _powerupsfx.PlayOneShot(_powerupclip, 1.0f);
+            
+            if (_powerupID >= 0 && _powerupID < 3)
+            {
+                _powerupsfx.PlayOneShot(_powerupclip, 1.0f);
+            }
+            if (_powerupID == 3)
+            {
+                _reloadsource.PlayOneShot(_reloadclip, 1.0f);
+            }
             Destroy(this.gameObject);
             _player.TrackScore(_pointvalue);
         }
