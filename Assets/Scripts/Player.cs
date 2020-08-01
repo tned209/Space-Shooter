@@ -55,6 +55,8 @@ public class Player : MonoBehaviour
     private bool _shotpowerupactive = false;
     [SerializeField]
     private bool _synergy = false;
+    private float _turbohealth = 3.0f;
+    private bool _turboactive = false;
 
     // Start is called before the first frame update
     void Start()
@@ -102,6 +104,10 @@ public class Player : MonoBehaviour
         {
             DisengageTurbo();
         }
+        if (_turbohealth < 3f && _turboactive == false)
+        {
+            TurboRecharge();
+        }
     }
 
     void CalculateMovement()
@@ -135,12 +141,35 @@ public class Player : MonoBehaviour
 
     private void EngageTurbo()
     {
-        _turbo = 3.0f;
+        _turboactive = true;
+        if (_turbohealth > 0)
+        {
+            _turbo = 3.0f;
+            _turbohealth -= Time.deltaTime;
+            _uiManager.BoostMeter(_turbohealth);
+            if (_turbohealth <= 0)
+            {
+                _turbohealth = 0;
+                _turbo = 0;
+            }
+        }
     }
 
     private void DisengageTurbo()
     {
         _turbo = 0f;
+        _turboactive = false;
+    }
+
+    private void TurboRecharge()
+    {
+        _turbohealth += Time.deltaTime / 3;
+        _uiManager.BoostMeter(_turbohealth);
+        if (_turbohealth > 3f)
+        {
+            _turbohealth = 3f;
+            _uiManager.BoostMeter(_turbohealth);
+        }
     }
 
     private void LaserFire()

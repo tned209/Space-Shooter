@@ -16,6 +16,9 @@ public class UIManager : MonoBehaviour
     private Text _restart = default;
     [SerializeField]
     private Text _ammoText = default;
+    [SerializeField]
+    GameObject _boostHealthBar = default;
+
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +36,11 @@ public class UIManager : MonoBehaviour
     public void UpdateUIScore(int _score)
     {
         _scoreText.text = "Score: " + _score.ToString();
+    }
+
+    public void BoostMeter(float _turbohealth)
+    {
+        _boostHealthBar.transform.localScale = new Vector3(_turbohealth / 3f, 1f, 1f);
     }
 
     public void UpdateLives(int _currentlives)
