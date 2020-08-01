@@ -2,13 +2,14 @@
 
 public class Laser : MonoBehaviour
 {
+    private float _laserspeed = 15f;
+
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
-
-    private float _laserspeed = 15;
 
     // Update is called once per frame
     void Update()

@@ -48,6 +48,13 @@ public class Player : MonoBehaviour
     private AudioSource _emptysource = default;
     private AudioClip _emptyclick = default;
     private Enemy[] _enemy;
+    [SerializeField]
+    private bool _waveshotactive = false;
+    private float _waveshotactivetime;
+    private float _shotactivetime;
+    private bool _shotpowerupactive = false;
+    [SerializeField]
+    private bool _synergy = false;
 
     // Start is called before the first frame update
     void Start()
@@ -141,20 +148,29 @@ public class Player : MonoBehaviour
         Vector3 laserOffset = new Vector3(0, 1.02f, 0);
         if (_tripleshotactive == false)
         {
-            if (_ammocount > 0)
+            if (_waveshotactive == false)
+            {
+                if (_ammocount > 0)
+                {
+                    Instantiate(_laserPrefab, transform.position + laserOffset, Quaternion.identity);
+                    _canfire = Time.time + _fireRate;
+                    _lasersource.PlayOneShot(_pewpew, 1.0f);
+                    _ammocount--;
+                    if (_uiManager != null)
+                    {
+                        _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime, _synergy);
+                    }
+                }
+                else if (_ammocount == 0)
+                {
+                    _emptysource.PlayOneShot(_emptyclick, 1.0f);
+                }
+            }
+            else if (_waveshotactive == true)
             {
                 Instantiate(_laserPrefab, transform.position + laserOffset, Quaternion.identity);
                 _canfire = Time.time + _fireRate;
                 _lasersource.PlayOneShot(_pewpew, 1.0f);
-                _ammocount--;
-                if(_uiManager != null)
-                {
-                    _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
-                }
-            }
-            else if (_ammocount == 0)
-            {
-                _emptysource.PlayOneShot(_emptyclick, 1.0f);
             }
         }
         else if (_tripleshotactive == true)
@@ -162,6 +178,7 @@ public class Player : MonoBehaviour
             Instantiate(_tripleshotPrefab, transform.position, Quaternion.identity);
             _lasersource.PlayOneShot(_pewpew, 1.0f);
         }
+
 
     }
     public void HealthManagement(bool _heal)
@@ -253,6 +270,10 @@ public void TripleShotActive()
     {
         _tripleshotactive = true;
         _tripleshotactivetime = _tripleshotactivetime + 5.0f;
+        if (_waveshotactive == true)
+        {
+            Synergy();
+        }
         StartCoroutine(PowerupPowerDownRoutine());
     }
     public void SpeedActive()
@@ -273,25 +294,44 @@ public void TripleShotActive()
         _shieldactive = true;
     }
 
+    public void WaveShotActive()
+    {
+        _waveshotactive = true;
+        _waveshotactivetime += 5.0f;
+        _laserPrefab.GetComponent<Laser>().enabled = false;
+        _laserPrefab.GetComponent<WaveLaser>().enabled = true;
+        if (_tripleshotactive == true)
+        {
+            Synergy();
+        }
+        StartCoroutine(PowerupPowerDownRoutine());
+    }
+
+    private void Synergy()
+    {
+        _synergy = true;
+        _waveshotactivetime = 10f;
+        _tripleshotactivetime = 10f;
+    }
+
     public void Reload()
     {
         _ammocount = 15;
-        _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
+        _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime, _synergy);
     }
 
     IEnumerator PowerupPowerDownRoutine()
     {
-        while (_tripleshotactive == true | _speedactive == true)
+        while (_tripleshotactive == true || _speedactive == true || _waveshotactive == true)
         {
             if (_tripleshotactive == true)
             {
-                _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
                 _tripleshotactivetime -= Time.deltaTime;
                 if (_tripleshotactivetime <= 0)
                 {
                     _tripleshotactivetime = 0;
                     _tripleshotactive = false;
-                    _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime);
+                    _synergy = false;
                 }
             }
             if (_speedactive == true)
@@ -304,6 +344,32 @@ public void TripleShotActive()
                     _playerspeedboost = 0f;
                 }
             }
+            if (_waveshotactive == true)
+            {
+                _waveshotactivetime -= Time.deltaTime;
+                if (_waveshotactivetime <= 0)
+                {
+                    _waveshotactivetime = 0;
+                    _waveshotactive = false;
+                    _synergy = false;
+                    _laserPrefab.GetComponent<Laser>().enabled = true;
+                    _laserPrefab.GetComponent<WaveLaser>().enabled = false;
+                }
+            }
+            if (_waveshotactivetime != 0 || _tripleshotactivetime != 0)
+            {
+                if (_tripleshotactivetime >= _waveshotactivetime)
+                {
+                    _shotactivetime = _tripleshotactivetime;
+                }
+                else _shotactivetime = _waveshotactivetime;
+            }
+            if (_tripleshotactive == true || _waveshotactive == true)
+            {
+                _shotpowerupactive = true;
+            }
+            else _shotpowerupactive = false;
+            _uiManager.UpdateAmmo(_ammocount, _shotpowerupactive, _shotactivetime, _synergy);
             yield return null;
         }
     }

@@ -40,13 +40,18 @@ public class UIManager : MonoBehaviour
         _livesimage.sprite = _livesprites[_currentlives];
     }
 
-    public void UpdateAmmo(int _ammocount, bool _tripleshotactive, float _tripleshotactivetime)  
+    public void UpdateAmmo(int _ammocount, bool _shotpowerupactive, float _shotactivetime, bool _synergy)  
     {
-        if (_tripleshotactive == false)
+        if (_synergy == true)
+        {
+            _ammoText.text = (" SYNERGY Free Fire for " + _shotactivetime.ToString() + " seconds");
+            return;
+        }
+        if (_shotpowerupactive == false)
         {
             _ammoText.text = "Ammo Remaining: " + _ammocount.ToString();
         }
-        else _ammoText.text = ("Free Fire for " + _tripleshotactivetime.ToString() + " seconds");
+        else _ammoText.text = ("Free Fire for " + _shotactivetime.ToString() + " seconds");
     }
 
     public IEnumerator GameOverDisplayCo()

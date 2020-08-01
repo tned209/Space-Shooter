@@ -13,6 +13,7 @@ TagManager:
   - Enemy_Laser
   - Ammo
   - Repair
+  - Wave_Laser
   layers:
   - Default
   - TransparentFX

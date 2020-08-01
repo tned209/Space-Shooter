@@ -862,8 +862,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -96, y: -37}
-  m_SizeDelta: {x: 152.80005, y: 15.393799}
+  m_AnchoredPosition: {x: -87.4, y: -45.4}
+  m_SizeDelta: {x: 135.5998, y: 32.1845}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &961345780
 GameObject:
@@ -1550,6 +1550,7 @@ MonoBehaviour:
   - {fileID: 7318330134029834962, guid: 846ae1027262b8449ac6dc0a7730ca19, type: 3}
   - {fileID: 6257439279018056770, guid: 7cea072c93cb0b64ebe53a5e5ed53bd1, type: 3}
   - {fileID: 4306063928699445150, guid: 32432d35a3c647e4faee863da4365f72, type: 3}
+  - {fileID: 5911389353077163007, guid: 58c5fff41b54f464d8f0e95f6150cbe7, type: 3}
 --- !u!4 &1286984659
 Transform:
   m_ObjectHideFlags: 0
@@ -2089,6 +2090,8 @@ MonoBehaviour:
   _playerExplosionPrefab: {fileID: 2372482673389781383, guid: 1ae14fd862e9eba4bbd107f996a8b050,
     type: 3}
   _emptysource: {fileID: 1431277991}
+  _waveshotactive: 0
+  _synergy: 0
 --- !u!212 &1672895261
 SpriteRenderer:
   m_ObjectHideFlags: 0
