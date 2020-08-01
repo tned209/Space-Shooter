@@ -19,6 +19,8 @@ public class Enemy : MonoBehaviour
     private AudioClip _pewpew = default;
     private AudioSource _lasersource = default;
     private GameObject LaserRef = default;
+    [SerializeField]
+    private bool _playeralive = true;
 
     // Start is called before the first frame update
     void Start()
@@ -50,7 +52,7 @@ public class Enemy : MonoBehaviour
         }
 
         //enemy fires laser occasionally
-        if (_refire <= Time.time && _name != "Dying Enemy" && _player != null)
+        if (_refire <= Time.time && _name != "Dying Enemy") // && _player != null)
         {
             LaserFire();
         }
@@ -89,10 +91,18 @@ public class Enemy : MonoBehaviour
 
     private void LaserFire()
     {
-        Vector3 laserOffset = new Vector3(0, -1.02f, 0);
-        _lasersource.PlayOneShot(_pewpew, 1.0f);
-        Instantiate(_enemyLaserPrefab, transform.position + laserOffset, Quaternion.identity);
-        _refire = Time.time + Random.Range(3.0f, 7.0f);
+        if (_playeralive == true)
+        {
+            Vector3 laserOffset = new Vector3(0, -1.02f, 0);
+            _lasersource.PlayOneShot(_pewpew, 1.0f);
+            Instantiate(_enemyLaserPrefab, transform.position + laserOffset, Quaternion.identity);
+            _refire = Time.time + Random.Range(3.0f, 7.0f);
+        }
+    }
+
+    public void OnPlayerDeath()
+    {
+        _playeralive = false;
     }
 }
     

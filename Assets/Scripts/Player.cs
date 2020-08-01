@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioSource _emptysource = default;
     private AudioClip _emptyclick = default;
+    private Enemy[] _enemy;
 
     // Start is called before the first frame update
     void Start()
@@ -165,7 +166,6 @@ public class Player : MonoBehaviour
     }
     public void HealthManagement(bool _heal)
     {
-        Debug.Log("_heal = " + _heal);
         if (_shieldactive == true && _heal == false)
         {
             ShieldDamage();
@@ -190,6 +190,11 @@ public class Player : MonoBehaviour
                 if (_spawnManager != null)
                 {
                     _spawnManager.OnPlayerDeath();
+                }
+                _enemy = FindObjectsOfType<Enemy>();
+                for (int i = 0; i < _enemy.Length; i++)
+                {
+                    _enemy[i].OnPlayerDeath();
                 }
                 return;
             case 1:
