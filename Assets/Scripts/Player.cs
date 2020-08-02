@@ -57,6 +57,7 @@ public class Player : MonoBehaviour
     private bool _synergy = false;
     private float _turbohealth = 3.0f;
     private bool _turboactive = false;
+    private Camera _camera;
 
     // Start is called before the first frame update
     void Start()
@@ -81,6 +82,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Player Spawn Manager is NULL");
         }
+        _camera = FindObjectOfType<Camera>();
     }
 
     // Update is called once per frame
@@ -220,6 +222,7 @@ public class Player : MonoBehaviour
         if (_heal == false)
         {
             _lives--;
+            StartCoroutine(_camera.CameraShake(2));
         }
         else if (_heal == true && _lives < 3)
         {
