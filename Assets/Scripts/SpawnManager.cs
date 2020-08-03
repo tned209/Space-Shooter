@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -46,7 +44,7 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(1.0f, 4.0f));
             if (_playeralive == true)
             {
-                GameObject newEnemy = Instantiate(_enemyPrefab, new Vector3(Random.Range(-9.5f, 9.5f), 5.75f, 0.0f), Quaternion.identity);
+                GameObject newEnemy = Instantiate(_enemyPrefab, new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0.0f), Quaternion.identity);
                 newEnemy.transform.parent = _enemyContainer.transform;
             }
         }
@@ -61,7 +59,7 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(3.0f, 7.0f));
             if (_playeralive == true)
             {
-                Instantiate(_poweruptype[PowerUpSelector()], new Vector3(Random.Range(-9.5f, 9.5f), 5.75f, 0.0f), Quaternion.identity);
+                Instantiate(_poweruptype[PowerUpSelector()], new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0.0f), Quaternion.identity);
             }
         }
     }

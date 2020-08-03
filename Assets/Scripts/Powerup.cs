@@ -3,7 +3,7 @@
 public class Powerup : MonoBehaviour
 {
     [SerializeField]
-    private float _powerupspeed = 3.0f;
+    private float _powerupspeed = 6.0f;
     private int _pointvalue = 500;
     [SerializeField]
     private int _powerupID = default;  //0 = tripleshot  1 = speedboost  2 = shield  3 = reload  4 = health  5 = waveshot
@@ -11,7 +11,6 @@ public class Powerup : MonoBehaviour
     private AudioSource _powerupsfx;
     private AudioClip _powerupclip;
     private GameObject _reloadRef = default;
-    [SerializeField]
     private AudioSource _reloadsource = default;
     private AudioClip _reloadclip = default;
 
@@ -29,7 +28,7 @@ public class Powerup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.y >= -5.75f)
+        if (transform.position.y >= -9.5f)
         {
             transform.Translate(new Vector3(0, -1 * _powerupspeed * Time.deltaTime, 0));
         }
@@ -45,6 +44,7 @@ public class Powerup : MonoBehaviour
             Player _player = other.transform.GetComponent<Player>();
             if (_player != null)
             {
+                Debug.Log("PowerupID = " + _powerupID);
                 switch (_powerupID)
                 {
                     case 0:
@@ -71,7 +71,7 @@ public class Powerup : MonoBehaviour
                 }
             }
             
-            if (_powerupID < 3 || _powerupID == 4)
+            if (_powerupID < 3 || _powerupID > 3)
             {
                 _powerupsfx.PlayOneShot(_powerupclip, 1.0f);
             }

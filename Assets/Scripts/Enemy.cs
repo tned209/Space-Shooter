@@ -4,7 +4,7 @@ using System.Collections;
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
-    float _enemyspeed = 4.0f;
+    float _enemyspeed = 5.0f;
     private int _scorevalue = 1000;
     private Animator _animator;
     private Player _player;
@@ -42,13 +42,13 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         //respawn enemy up top if it makes it to the bottom of the field alive, otherwise propel it towards the bottom
-        if (transform.position.y >= -5.75f)
+        if (transform.position.y >= -9.5f)
         {
             transform.Translate(new Vector3(0, -1 * _enemyspeed * Time.deltaTime, 0));
         }
-        else if (transform.position.y <= -5.75f && _name != "Dying Enemy")
+        else if (transform.position.y <= -9.5f && _name != "Dying Enemy")
         {
-            transform.position = new Vector3(Random.Range(-9.5f, 9.5f), 5.75f, 0);
+            transform.position = new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0);
         }
 
         //enemy fires laser occasionally

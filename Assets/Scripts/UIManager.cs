@@ -48,16 +48,11 @@ public class UIManager : MonoBehaviour
         _livesimage.sprite = _livesprites[_currentlives];
     }
 
-    public void UpdateAmmo(int _ammocount, bool _shotpowerupactive, float _shotactivetime, bool _synergy)  
+    public void UpdateAmmo(int _ammocount, bool _shotpowerupactive, float _shotactivetime)  
     {
-        if (_synergy == true)
-        {
-            _ammoText.text = (" SYNERGY Free Fire for " + _shotactivetime.ToString() + " seconds");
-            return;
-        }
         if (_shotpowerupactive == false)
         {
-            _ammoText.text = "Ammo Remaining: " + _ammocount.ToString();
+            _ammoText.text = "Ammo Remaining: " + _ammocount.ToString() + "/15";
         }
         else _ammoText.text = ("Free Fire for " + _shotactivetime.ToString() + " seconds");
     }

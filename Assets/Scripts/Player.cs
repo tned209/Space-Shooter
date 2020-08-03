@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private float _playerspeed = 5.0f;
+    private float _playerspeed = 8.0f;
     private float _playerspeedboost = 0f;
     [SerializeField]
     private GameObject _laserPrefab = default;
@@ -15,12 +15,8 @@ public class Player : MonoBehaviour
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
     [SerializeField]
-    private bool _tripleshotactive = false;
-    [SerializeField]
-    private bool _speedactive = false;
-    [SerializeField]
     private bool _shieldactive = false;
-    private float _tripleshotactivetime;
+    private bool _speedactive = false;
     private float _speedactivetime;
     [SerializeField]
     private GameObject _activeshieldvisualizer = default;
@@ -49,15 +45,19 @@ public class Player : MonoBehaviour
     private AudioClip _emptyclick = default;
     private Enemy[] _enemy;
     [SerializeField]
-    private bool _waveshotactive = false;
-    private float _waveshotactivetime;
     private float _shotactivetime;
     private bool _shotpowerupactive = false;
     [SerializeField]
-    private bool _synergy = false;
     private float _turbohealth = 3.0f;
     private bool _turboactive = false;
     private Camera _camera;
+    [SerializeField]
+    private int _shotType = 0;  //  0 = normal  1 = tripleshot  2 = wavelaser 3 = triplewaveshot
+    [SerializeField]
+    private GameObject _wavelaserPrefab = default;
+    [SerializeField]
+    private GameObject _triplewaveshotPrefab = default;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -129,15 +129,15 @@ public class Player : MonoBehaviour
         transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * (_playerspeed + _playerspeedboost + _turbo) * Time.deltaTime);
 
         // restricting player to playspace with horizontal wraparound
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -3.8f, 5.8f), 0);
+        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -9.5f, 11.5f), 0);
 
-        if (transform.position.x >= 9.5f)
+        if (transform.position.x >= 19.5f)
         {
-            transform.position = new Vector3(-9.5f, transform.position.y, 0);
+            transform.position = new Vector3(-19.5f, transform.position.y, 0);
         }
-        else if (transform.position.x <= -9.5)
+        else if (transform.position.x <= -19.5)
         {
-            transform.position = new Vector3(9.5f, transform.position.y, 0);
+            transform.position = new Vector3(19.5f, transform.position.y, 0);
         }
     }
 
@@ -177,10 +177,11 @@ public class Player : MonoBehaviour
     private void LaserFire()
     {
         Vector3 laserOffset = new Vector3(0, 1.02f, 0);
-        if (_tripleshotactive == false)
+        Debug.Log("Shot Type = " + _shotType);
+        
+        switch (_shotType)
         {
-            if (_waveshotactive == false)
-            {
+            case 0:
                 if (_ammocount > 0)
                 {
                     Instantiate(_laserPrefab, transform.position + laserOffset, Quaternion.identity);
@@ -189,29 +190,41 @@ public class Player : MonoBehaviour
                     _ammocount--;
                     if (_uiManager != null)
                     {
-                        _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime, _synergy);
+                        _uiManager.UpdateAmmo(_ammocount, _shotpowerupactive, _shotactivetime);
                     }
                 }
                 else if (_ammocount == 0)
                 {
                     _emptysource.PlayOneShot(_emptyclick, 1.0f);
                 }
-            }
-            else if (_waveshotactive == true)
-            {
-                Instantiate(_laserPrefab, transform.position + laserOffset, Quaternion.identity);
+                return;
+
+            case 1:
+                Instantiate(_tripleshotPrefab, transform.position, Quaternion.identity);
                 _canfire = Time.time + _fireRate;
                 _lasersource.PlayOneShot(_pewpew, 1.0f);
-            }
-        }
-        else if (_tripleshotactive == true)
-        {
-            Instantiate(_tripleshotPrefab, transform.position, Quaternion.identity);
-            _lasersource.PlayOneShot(_pewpew, 1.0f);
+                return;
+
+            case 2:
+                Instantiate(_wavelaserPrefab, transform.position + laserOffset, Quaternion.identity);
+                _canfire = Time.time + _fireRate;
+                _lasersource.PlayOneShot(_pewpew, 1.0f);
+                return;
+
+            case 3:
+                Instantiate(_triplewaveshotPrefab, transform.position + laserOffset, Quaternion.identity);
+                _canfire = Time.time + _fireRate;
+                _lasersource.PlayOneShot(_pewpew, 1.0f);
+                return;
+
+            default:
+                Debug.LogError("_shotType defaulted");
+                return;
         }
 
 
     }
+    
     public void HealthManagement(bool _heal)
     {
         if (_shieldactive == true && _heal == false)
@@ -258,6 +271,9 @@ public class Player : MonoBehaviour
                 _leftdamagevisualizer.SetActive(false);
                 _rightdamagevisualizer.SetActive(false);
                 return;
+            default:
+                Debug.LogError("_lives defaulted");
+                return;
         }
     }
 
@@ -300,19 +316,22 @@ public class Player : MonoBehaviour
 
 public void TripleShotActive()
     {
-        _tripleshotactive = true;
-        _tripleshotactivetime = _tripleshotactivetime + 5.0f;
-        if (_waveshotactive == true)
+        Debug.Log("TS Called");
+        if (_shotType == 2)
         {
             Synergy();
+            return;
         }
+        _shotpowerupactive = true;
+        _shotType = 1;
+        _shotactivetime += 5.0f;
         StartCoroutine(PowerupPowerDownRoutine());
     }
     public void SpeedActive()
     {
-        _playerspeedboost = 3.0f;
         _speedactive = true;
-        _speedactivetime = _speedactivetime + 5.0f;
+        _playerspeedboost = 3.0f;
+        _speedactivetime += 5.0f;
         StartCoroutine(PowerupPowerDownRoutine());
     }
     public void ShieldActive()
@@ -328,80 +347,55 @@ public void TripleShotActive()
 
     public void WaveShotActive()
     {
-        _waveshotactive = true;
-        _waveshotactivetime += 5.0f;
-        _laserPrefab.GetComponent<Laser>().enabled = false;
-        _laserPrefab.GetComponent<WaveLaser>().enabled = true;
-        if (_tripleshotactive == true)
+        if (_shotType == 1)
         {
             Synergy();
+            return;
         }
+        _shotpowerupactive = true;
+        _shotType = 2;
+        _shotactivetime += 5.0f;
         StartCoroutine(PowerupPowerDownRoutine());
     }
 
     private void Synergy()
     {
-        _synergy = true;
-        _waveshotactivetime = 10f;
-        _tripleshotactivetime = 10f;
+        _shotpowerupactive = true;
+        _shotType = 3;
+        _shotactivetime = 10f;
     }
 
     public void Reload()
     {
         _ammocount = 15;
-        _uiManager.UpdateAmmo(_ammocount, _tripleshotactive, _tripleshotactivetime, _synergy);
+        _uiManager.UpdateAmmo(_ammocount, _shotpowerupactive, _shotactivetime);
     }
 
     IEnumerator PowerupPowerDownRoutine()
     {
-        while (_tripleshotactive == true || _speedactive == true || _waveshotactive == true)
-        {
-            if (_tripleshotactive == true)
+            while (_shotpowerupactive == true | _speedactive == true)
             {
-                _tripleshotactivetime -= Time.deltaTime;
-                if (_tripleshotactivetime <= 0)
+                if (_shotpowerupactive == true)
                 {
-                    _tripleshotactivetime = 0;
-                    _tripleshotactive = false;
-                    _synergy = false;
+                    _shotactivetime -= Time.deltaTime;
+                _uiManager.UpdateAmmo(_ammocount, _shotpowerupactive, _shotactivetime);
+                if (_shotactivetime <= 0)
+                    {
+                        _shotactivetime = 0;
+                        _shotType = 0;
+                        _shotpowerupactive = false;
+                    }
                 }
-            }
-            if (_speedactive == true)
-            {
-                _speedactivetime -= Time.deltaTime;
-                if (_speedactivetime <= 0)
+                if (_speedactive == true)
                 {
-                    _speedactivetime = 0;
-                    _speedactive = false;
-                    _playerspeedboost = 0f;
+                    _speedactivetime -= Time.deltaTime;
+                    if (_speedactivetime <= 0)
+                    {
+                        _speedactivetime = 0;
+                        _speedactive = false;
+                    }
                 }
-            }
-            if (_waveshotactive == true)
-            {
-                _waveshotactivetime -= Time.deltaTime;
-                if (_waveshotactivetime <= 0)
-                {
-                    _waveshotactivetime = 0;
-                    _waveshotactive = false;
-                    _synergy = false;
-                    _laserPrefab.GetComponent<Laser>().enabled = true;
-                    _laserPrefab.GetComponent<WaveLaser>().enabled = false;
-                }
-            }
-            if (_waveshotactivetime != 0 || _tripleshotactivetime != 0)
-            {
-                if (_tripleshotactivetime >= _waveshotactivetime)
-                {
-                    _shotactivetime = _tripleshotactivetime;
-                }
-                else _shotactivetime = _waveshotactivetime;
-            }
-            if (_tripleshotactive == true || _waveshotactive == true)
-            {
-                _shotpowerupactive = true;
-            }
-            else _shotpowerupactive = false;
-            _uiManager.UpdateAmmo(_ammocount, _shotpowerupactive, _shotactivetime, _synergy);
+            _uiManager.UpdateAmmo(_ammocount, _shotpowerupactive, _shotactivetime);
             yield return null;
         }
     }

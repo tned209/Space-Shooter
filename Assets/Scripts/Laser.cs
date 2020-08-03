@@ -2,7 +2,7 @@
 
 public class Laser : MonoBehaviour
 {
-    private float _laserspeed = 15f;
+    private float _laserspeed = 16f;
 
 
     // Start is called before the first frame update
@@ -15,7 +15,7 @@ public class Laser : MonoBehaviour
     void Update()
     {
         transform.Translate(Vector3.up * _laserspeed * Time.deltaTime);
-        if (transform.position.y >= 8f)
+        if (transform.position.y >= 11.5f)
         {
             if (transform.parent != null)
             {
