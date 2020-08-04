@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
@@ -52,7 +51,7 @@ public class Enemy : MonoBehaviour
         }
 
         //enemy fires laser occasionally
-        if (_refire <= Time.time && _name != "Dying Enemy") // && _player != null)
+        if (_refire <= Time.time && _name != "Dying Enemy")
         {
             LaserFire();
         }
@@ -68,10 +67,10 @@ public class Enemy : MonoBehaviour
             _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
             _animator.SetTrigger("OnEnemyDeath");
             Destroy(this.gameObject, 2.8f);
-            _player.TrackScore(_scorevalue);
             if (_player != null)
             {
                 _player.HealthManagement(false);
+                _player.TrackScore(_scorevalue);
             }
         }
         else if (other.tag == "Laser")
@@ -86,6 +85,19 @@ public class Enemy : MonoBehaviour
             {
                 _player.TrackScore(_scorevalue);
             }
+        }
+    }
+
+    public void Death()
+    {
+        _name = ("Dying Enemy");
+        Destroy(_bc);
+        _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
+        _animator.SetTrigger("OnEnemyDeath");
+        Destroy(this.gameObject, 2.8f);
+        if (_player != null)
+        {
+            _player.TrackScore(_scorevalue);
         }
     }
 

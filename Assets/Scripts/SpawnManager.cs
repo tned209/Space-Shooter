@@ -12,6 +12,8 @@ public class SpawnManager : MonoBehaviour
     private bool _playeralive = true;
     [SerializeField]
     private GameObject[] _poweruptype = default;
+    [SerializeField]
+    private GameObject _enemyMinelayer = default;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +37,7 @@ public class SpawnManager : MonoBehaviour
     {
         StartCoroutine(SpawnEnemy());
         StartCoroutine(SpawnPowerup());
+        StartCoroutine(SpawnMinelayer());
     }
 
     IEnumerator SpawnEnemy()
@@ -44,8 +47,27 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(1.0f, 4.0f));
             if (_playeralive == true)
             {
-                GameObject newEnemy = Instantiate(_enemyPrefab, new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0.0f), Quaternion.identity);
-                newEnemy.transform.parent = _enemyContainer.transform;
+                GameObject _newEnemy = Instantiate(_enemyPrefab, new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0.0f), Quaternion.identity);
+                _newEnemy.transform.parent = _enemyContainer.transform;
+            }
+        }
+    }
+
+    IEnumerator SpawnMinelayer()
+    {
+        int _side;
+        while (_playeralive == true)
+        {
+            if (Random.value < 0.5f)
+            {
+                _side = 1;
+            }
+            else _side = -1;
+            yield return new WaitForSeconds(Random.Range(15f, 25f));
+            if (_playeralive == true)
+            {
+                GameObject _newMinelayer = Instantiate(_enemyMinelayer, new Vector3(19.4f * _side, 7.75f, 0), Quaternion.identity);
+                _newMinelayer.transform.parent = _enemyContainer.transform;
             }
         }
     }

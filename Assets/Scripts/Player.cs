@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private float _playerspeed = 8.0f;
+    private float _playerspeed = 6.0f;
     private float _playerspeedboost = 0f;
     [SerializeField]
     private GameObject _laserPrefab = default;
@@ -43,7 +43,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioSource _emptysource = default;
     private AudioClip _emptyclick = default;
-    private Enemy[] _enemy;
     [SerializeField]
     private float _shotactivetime;
     private bool _shotpowerupactive = false;
@@ -177,7 +176,6 @@ public class Player : MonoBehaviour
     private void LaserFire()
     {
         Vector3 laserOffset = new Vector3(0, 1.02f, 0);
-        Debug.Log("Shot Type = " + _shotType);
         
         switch (_shotType)
         {
@@ -247,16 +245,27 @@ public class Player : MonoBehaviour
         {
             case 0:
                 _playerexplosionsfx.PlayOneShot(_playerboom, 1.0f);
-                Instantiate(_playerExplosionPrefab, transform.position, Quaternion.identity);
+                GameObject _boom = Instantiate(_playerExplosionPrefab, transform.position, Quaternion.identity);
+                Destroy(_boom, 2.35f);
                 Destroy(this.gameObject);
                 if (_spawnManager != null)
                 {
                     _spawnManager.OnPlayerDeath();
                 }
-                _enemy = FindObjectsOfType<Enemy>();
+                Enemy[] _enemy = FindObjectsOfType<Enemy>();
                 for (int i = 0; i < _enemy.Length; i++)
                 {
                     _enemy[i].OnPlayerDeath();
+                }
+                Enemy_Minelayer[] _enemyMinelayer = FindObjectsOfType<Enemy_Minelayer>();
+                for (int i = 0; i < _enemyMinelayer.Length; i++)
+                {
+                    _enemyMinelayer[i].OnPlayerDeath();
+                }
+                Mine[] _mine = FindObjectsOfType<Mine>();
+                for (int i = 0; i < _mine.Length; i++)
+                {
+                    _mine[i].OnPlayerDeath();
                 }
                 return;
             case 1:
@@ -316,7 +325,6 @@ public class Player : MonoBehaviour
 
 public void TripleShotActive()
     {
-        Debug.Log("TS Called");
         if (_shotType == 2)
         {
             Synergy();
