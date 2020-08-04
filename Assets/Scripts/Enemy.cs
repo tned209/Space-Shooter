@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//using System.Numerics;
+using UnityEditor;
+using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
@@ -20,6 +22,11 @@ public class Enemy : MonoBehaviour
     private GameObject LaserRef = default;
     [SerializeField]
     private bool _playeralive = true;
+    private bool _shotfired = false;
+    private bool _adjustPosition = false;
+    [SerializeField]
+    private Vector3 _targetPos = default;
+
 
     // Start is called before the first frame update
     void Start()
@@ -40,14 +47,51 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //respawn enemy up top if it makes it to the bottom of the field alive, otherwise propel it towards the bottom
-        if (transform.position.y >= -9.5f)
+        if (_shotfired == true)
         {
-            transform.Translate(new Vector3(0, -1 * _enemyspeed * Time.deltaTime, 0));
+            float _shift = 0;
+
+            if (Random.value >= 0.33f)
+            {
+                _shift = 0;
+            }
+            else if (Random.value >= 0.5f)
+            {
+                _shift = -2f;
+            }
+            else _shift = 2f;
+            _targetPos = new Vector3(transform.position.x + _shift, transform.position.y - 2f, 0);
+            if (_targetPos.x < -19.5f)
+            {
+                _targetPos.x = -19.5f;
+            }
+            if (_targetPos.x > 19.5)
+            {
+                _targetPos.x = 19.5f;
+            }
+            _shotfired = false;
+            _adjustPosition = true;
+        }
+
+        if (_adjustPosition == true)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _targetPos, _enemyspeed * Time.deltaTime);
+            if (Vector3.Distance(transform.position, _targetPos) < .01f)
+            {
+                _adjustPosition = false;
+            }
+        }
+        
+
+        //respawn enemy up top if it makes it to the bottom of the field alive, otherwise propel it towards the bottom, allowing it to shift position if it has fired recently
+        if (transform.position.y >= -9.5f && _adjustPosition == false)
+        {
+            transform.Translate(new Vector3(0, -1 * _enemyspeed, 0) * Time.deltaTime);
         }
         else if (transform.position.y <= -9.5f && _name != "Dying Enemy")
         {
             transform.position = new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0);
+            _adjustPosition = false;
         }
 
         //enemy fires laser occasionally
@@ -105,6 +149,7 @@ public class Enemy : MonoBehaviour
     {
         if (_playeralive == true)
         {
+            _shotfired = true;
             Vector3 laserOffset = new Vector3(0, -1.02f, 0);
             _lasersource.PlayOneShot(_pewpew, 1.0f);
             Instantiate(_enemyLaserPrefab, transform.position + laserOffset, Quaternion.identity);

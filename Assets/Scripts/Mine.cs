@@ -21,7 +21,6 @@ public class Mine : MonoBehaviour
     private AudioSource _mineExplosionSource = default;
     private GameObject _mineExplosionpRef = default;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -118,8 +117,6 @@ public class Mine : MonoBehaviour
                 return;
             }
         }
-
-
     }
 
     public void Death()
