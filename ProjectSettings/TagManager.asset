@@ -14,6 +14,7 @@ TagManager:
   - Ammo
   - Repair
   - Wave_Laser
+  - AmmoCounter
   layers:
   - Default
   - TransparentFX

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +18,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _ammoText = default;
     [SerializeField]
-    GameObject _boostHealthBar = default;
+    private GameObject _boostHealthBar = default;
+    private GameObject[] _ammoIcons = default;
 
 
     // Start is called before the first frame update
@@ -25,6 +27,7 @@ public class UIManager : MonoBehaviour
     {
         _gameover.gameObject.SetActive(false);
         _restart.gameObject.SetActive(false);
+        _ammoIcons = GameObject.FindGameObjectsWithTag("AmmoCounter");
     }
 
     // Update is called once per frame
@@ -55,6 +58,18 @@ public class UIManager : MonoBehaviour
             _ammoText.text = "Ammo Remaining: " + _ammocount.ToString() + "/15";
         }
         else _ammoText.text = ("Free Fire for " + _shotactivetime.ToString() + " seconds");
+
+        for (int i = 0; i < _ammoIcons.Length; i++)
+        {
+            if (i <= _ammocount - 1)
+            {
+                _ammoIcons[i].gameObject.SetActive(true);
+            }
+            if (i > _ammocount - 1)
+            {
+                _ammoIcons[i].gameObject.SetActive(false);
+            }
+        }
     }
 
     public IEnumerator GameOverDisplayCo()
