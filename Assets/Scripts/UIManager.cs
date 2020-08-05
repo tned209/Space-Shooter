@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject _boostHealthBar = default;
     private GameObject[] _ammoIcons = default;
+    [SerializeField]
+    private Text _waveBanner = default;
 
 
     // Start is called before the first frame update
@@ -70,6 +72,18 @@ public class UIManager : MonoBehaviour
                 _ammoIcons[i].gameObject.SetActive(false);
             }
         }
+    }
+
+    public IEnumerator WaveAnnounce(int _currentWave)
+    {
+        _waveBanner.text = ("Wave " + _currentWave);
+        _waveBanner.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        _waveBanner.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        _waveBanner.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        _waveBanner.gameObject.SetActive(false);
     }
 
     public IEnumerator GameOverDisplayCo()

@@ -1,4 +1,5 @@
 ﻿//using System.Numerics;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ public class Enemy : MonoBehaviour
     private bool _adjustPosition = false;
     [SerializeField]
     private Vector3 _targetPos = default;
+    SpawnManager _spawnManager;
 
 
     // Start is called before the first frame update
@@ -42,6 +44,7 @@ public class Enemy : MonoBehaviour
         _lasersource = LaserRef.GetComponent<AudioSource>();
         _pewpew = _lasersource.clip;
         _refire = Time.time + Random.Range(1.0f, 4.0f);
+        _spawnManager = FindObjectOfType<SpawnManager>();
     }
 
     // Update is called once per frame
@@ -111,6 +114,7 @@ public class Enemy : MonoBehaviour
             _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
             _animator.SetTrigger("OnEnemyDeath");
             Destroy(this.gameObject, 2.8f);
+            _spawnManager.KillTracker();
             if (_player != null)
             {
                 _player.HealthManagement(false);
@@ -125,6 +129,7 @@ public class Enemy : MonoBehaviour
             _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
             _animator.SetTrigger("OnEnemyDeath");
             Destroy(this.gameObject, 2.8f);
+            _spawnManager.KillTracker();
             if (_player != null)
             {
                 _player.TrackScore(_scorevalue);
@@ -139,6 +144,7 @@ public class Enemy : MonoBehaviour
         _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
         _animator.SetTrigger("OnEnemyDeath");
         Destroy(this.gameObject, 2.8f);
+        _spawnManager.KillTracker();
         if (_player != null)
         {
             _player.TrackScore(_scorevalue);

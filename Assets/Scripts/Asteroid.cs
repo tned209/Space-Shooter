@@ -40,7 +40,7 @@ public class Asteroid : MonoBehaviour
             Destroy(this.gameObject, 0.3f);
             _player.HealthManagement(false);
             Destroy(_boom, 2.35f);
-            _spawnmanager.StartSpawning();
+            //_spawnmanager.StartSpawning();
         }
         if (other.tag == "Laser")
         {
@@ -50,7 +50,7 @@ public class Asteroid : MonoBehaviour
             Destroy(this.gameObject, 0.3f);
             Destroy(other.gameObject);
             Destroy(_boom, 2.35f);
-            _spawnmanager.StartSpawning();
+            //_spawnmanager.StartSpawning();
         }
     }
 }

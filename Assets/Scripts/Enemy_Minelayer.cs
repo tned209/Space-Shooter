@@ -30,6 +30,7 @@ public class Enemy_Minelayer: MonoBehaviour
     private AudioClip _impactClip = default;
     [SerializeField]
     private bool _movingright = false;
+    SpawnManager _spawnManager;
 
 
     // Start is called before the first frame update
@@ -58,6 +59,7 @@ public class Enemy_Minelayer: MonoBehaviour
         _impactRef = GameObject.Find("weapon_impact");
         _impactSource = _impactRef.GetComponent<AudioSource>();
         _impactClip = _impactSource.clip;
+        _spawnManager = GameObject.FindObjectOfType<SpawnManager>();
     }
 
     // Update is called once per frame
@@ -145,6 +147,7 @@ public class Enemy_Minelayer: MonoBehaviour
         _newExplosion.transform.parent = gameObject.transform;
         StartCoroutine(RenderDelay());
         Destroy(this.gameObject, 1.36f);
+        _spawnManager.KillTracker();
     }
 
         private void MineDrop()
