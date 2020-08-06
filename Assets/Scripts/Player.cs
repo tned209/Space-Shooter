@@ -56,6 +56,12 @@ public class Player : MonoBehaviour
     private GameObject _wavelaserPrefab = default;
     [SerializeField]
     private GameObject _triplewaveshotPrefab = default;
+    [SerializeField]
+    private bool _powerDownActive = false;
+    [SerializeField]
+    private int _storeAmmoCount;
+    [SerializeField]
+    private float _powerDownActiveTime;
     
 
     // Start is called before the first frame update
@@ -372,6 +378,35 @@ public void TripleShotActive()
         _shotType = 3;
         _shotactivetime = 10f;
     }
+
+    public void PowerDown()
+    {
+        _storeAmmoCount = _ammocount;
+        _ammocount = 0;
+        _playerspeedboost = -3f;
+        _powerDownActive = true;
+        _powerDownActiveTime += Random.Range(1f, 10f);
+        _uiManager.UpdateAmmo(_ammocount, _shotpowerupactive, _shotactivetime);
+        StartCoroutine(PowerDownPowerDownRoutine());
+    }
+
+    IEnumerator PowerDownPowerDownRoutine()
+    {
+        while (_powerDownActive == true)
+        {
+            yield return new WaitForSeconds(_powerDownActiveTime);
+            _powerDownActiveTime = 0;
+            if (_ammocount == 0)
+            {
+                _ammocount = _storeAmmoCount;
+            }
+            _playerspeedboost = 0f;
+            _powerDownActive = false;
+            _uiManager.UpdateAmmo(_ammocount, _shotpowerupactive, _shotactivetime);
+        }
+        yield return null;
+    }
+
 
     public void Reload()
     {

@@ -42,6 +42,7 @@ public class SpawnManager : MonoBehaviour
         _powerups.Add(3, 15f);
         _powerups.Add(4, 3f);
         _powerups.Add(5, 2f);
+        _powerups.Add(6, 1f);
     }
 
     //Update is called once per frame
@@ -137,7 +138,7 @@ public class SpawnManager : MonoBehaviour
     {
         while (_playeralive == true && _spawnNumber > 0)
         {
-            yield return new WaitForSeconds(4f - _spawnRateModifier);
+            yield return new WaitForSeconds(3.5f - _spawnRateModifier);
             if (_playeralive == true)
             {
                 GameObject _newEnemy = Instantiate(_enemyShips[0], new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0.0f), Quaternion.identity);
@@ -171,7 +172,7 @@ public class SpawnManager : MonoBehaviour
     {
         while (_playeralive == true)
         {
-            yield return new WaitForSeconds(Random.Range(3.0f, 7.0f));
+            yield return new WaitForSeconds(Random.Range(3.0f, 7.0f) - _spawnRateModifier);
             if (_playeralive == true)
             {
                 Instantiate(_poweruptype[PowerUpSelector()], new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0.0f), Quaternion.identity);
