@@ -31,6 +31,9 @@ public class Enemy_Minelayer: MonoBehaviour
     [SerializeField]
     private bool _movingright = false;
     SpawnManager _spawnManager;
+    private bool _activeShield = false;
+    //[SerializeField]
+    //private GameObject _activeShieldVisualizer = default;
 
 
     // Start is called before the first frame update
@@ -60,7 +63,7 @@ public class Enemy_Minelayer: MonoBehaviour
         _impactSource = _impactRef.GetComponent<AudioSource>();
         _impactClip = _impactSource.clip;
         _spawnManager = GameObject.FindObjectOfType<SpawnManager>();
-    }
+}
 
     // Update is called once per frame
     void Update()
@@ -100,6 +103,12 @@ public class Enemy_Minelayer: MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            if (_activeShield == true)
+            {
+                gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                _activeShield = false;
+                return;
+            }
             if (_health > 1)
             {
                 _health--;
@@ -121,6 +130,12 @@ public class Enemy_Minelayer: MonoBehaviour
         else if (other.tag == "Laser")
         {
             Destroy(other.gameObject);
+            if (_activeShield == true)
+            {
+                gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                _activeShield = false;
+                return;
+            }
             if (_health > 1)
             {
                 _health--;
@@ -146,6 +161,10 @@ public class Enemy_Minelayer: MonoBehaviour
         GameObject _newExplosion = Instantiate(_explosionAnimation, transform.position, Quaternion.identity);
         _newExplosion.transform.parent = gameObject.transform;
         StartCoroutine(RenderDelay());
+        if (Random.value <= 0.33f)
+        {
+            _spawnManager.AmmoBonus(transform.position);
+        }
         Destroy(this.gameObject, 1.36f);
         _spawnManager.KillTracker();
     }
@@ -172,4 +191,11 @@ public class Enemy_Minelayer: MonoBehaviour
         Destroy(_sr);
         yield return null;
     }
+
+    public void ActivateShields()
+    {
+        _activeShield = true;
+        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+    }
+
 }

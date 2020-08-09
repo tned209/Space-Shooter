@@ -28,6 +28,9 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private Vector3 _targetPos = default;
     SpawnManager _spawnManager;
+    private bool _activeShield = false;
+    //[SerializeField]
+    //private GameObject _activeShieldVisualizer = default;
 
 
     // Start is called before the first frame update
@@ -109,6 +112,13 @@ public class Enemy : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            
+            if (_activeShield == true)
+            {
+                gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                _activeShield = false;
+                return;
+            }
             _name = ("Dying Enemy");
             Destroy(_bc);
             _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
@@ -123,8 +133,14 @@ public class Enemy : MonoBehaviour
         }
         else if (other.tag == "Laser")
         {
-            _name = ("Dying Enemy");
             Destroy(other.gameObject);
+            if (_activeShield == true)
+            {
+                gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                _activeShield = false;
+                return;
+            }
+            _name = ("Dying Enemy");
             Destroy(_bc);
             _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
             _animator.SetTrigger("OnEnemyDeath");
@@ -139,6 +155,12 @@ public class Enemy : MonoBehaviour
 
     public void Death()
     {
+        if (_activeShield == true)
+        {
+            gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            _activeShield = false;
+            return;
+        }
         _name = ("Dying Enemy");
         Destroy(_bc);
         _enemyexplosionsfx.PlayOneShot(_enemyboom, 1.0f);
@@ -166,6 +188,12 @@ public class Enemy : MonoBehaviour
     public void OnPlayerDeath()
     {
         _playeralive = false;
+    }
+
+    public void ActivateShields()
+    {
+        _activeShield = true;
+        gameObject.transform.GetChild(0).gameObject.SetActive(true);
     }
 }
     

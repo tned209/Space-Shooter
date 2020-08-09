@@ -435,6 +435,7 @@ public void TripleShotActive()
                     if (_speedactivetime <= 0)
                     {
                         _speedactivetime = 0;
+                        _playerspeedboost = 0;
                         _speedactive = false;
                     }
                 }

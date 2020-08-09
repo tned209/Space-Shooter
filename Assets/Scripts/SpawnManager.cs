@@ -99,7 +99,7 @@ public class SpawnManager : MonoBehaviour
     public float SpawnWeight()
     {
         float _waveDifficulty = 0;
-        float _waveWeightModifier = 200;
+        float _waveWeightModifier = 100;
         float _weightToSpawn = 0;
 
         _waveDifficulty = _difficultyCurve.Evaluate(_currentWave);
@@ -125,12 +125,15 @@ public class SpawnManager : MonoBehaviour
         while (_randomweight == _weightedsum);
         foreach (KeyValuePair<int, float> _enemyValues in _enemySpawn)
         {
-            if (_randomweight < _enemyValues.Value)
+            if (_enemyValues.Key <= _currentWave - 1)
             {
-                _selectedEnemy =_enemyValues.Key;
-                _enemyWeight = _enemyValues.Value;
+                if (_randomweight < _enemyValues.Value)
+                {
+                    _selectedEnemy = _enemyValues.Key;
+                    _enemyWeight = _enemyValues.Value;
+                }
+                else _randomweight -= _enemyValues.Value;
             }
-            else _randomweight -= _enemyValues.Value;
         }
     }
 
@@ -143,6 +146,13 @@ public class SpawnManager : MonoBehaviour
             {
                 GameObject _newEnemy = Instantiate(_enemyShips[0], new Vector3(Random.Range(-19.5f, 19.5f), 11.5f, 0.0f), Quaternion.identity);
                 _newEnemy.transform.parent = _enemyContainer.transform;
+                if (_currentWave > 2)
+                {
+                    if (Random.value < 0.2f)
+                    {
+                        _newEnemy.GetComponent<Enemy>().ActivateShields();
+                    }
+                }
             }
             _spawnNumber--;
         }
@@ -163,6 +173,13 @@ public class SpawnManager : MonoBehaviour
             {
                 GameObject _newMinelayer = Instantiate(_enemyShips[1], new Vector3(19.4f * _side, 7.75f, 0), Quaternion.identity);
                 _newMinelayer.transform.parent = _enemyContainer.transform;
+                if (_currentWave > 3)
+                {
+                    if (Random.value < 0.2f)
+                    {
+                        _newMinelayer.GetComponent<Enemy_Minelayer>().ActivateShields();
+                    }
+                }
             }
             _spawnNumber--;
         }
@@ -209,6 +226,11 @@ public class SpawnManager : MonoBehaviour
         };
         Debug.LogError("PowerUpSelector is out of range");  //these 2 lines at the end should never happen
         return 0;  //this is only here to suppress an error
+    }
+
+    public void AmmoBonus(Vector3 _ammolocation)
+    {
+        Instantiate(_poweruptype[3], _ammolocation, Quaternion.identity);
     }
 
     public void KillTracker()
